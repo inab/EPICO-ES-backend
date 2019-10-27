@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     "TabParser" => "0.01",
     "boolean" => 0
   },
-  "VERSION" => "v1.0.0",
+  "VERSION" => "v1.0.1",
   "test" => {
     "TESTS" => "t/*.t"
   }
