@@ -12,7 +12,7 @@ package EPICO::REST::Backend::EPICO;
 
 use version;
 
-our $VERSION = version->declare('v1.0.1');
+our $VERSION = version->declare('v1.2.0');
 
 use base qw(EPICO::REST::Backend);
 

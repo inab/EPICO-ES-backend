@@ -6,27 +6,37 @@ use warnings;
 
 use ExtUtils::MakeMaker;
 
+use File::ShareDir::Install;
+$File::ShareDir::Install::INCLUDE_DOTFILES = 1;
+$File::ShareDir::Install::INCLUDE_DOTDIRS = 1;
+install_share module => "EPICO::REST::Backend", "backend\-shared";
+
+
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Native ElasticSearch backend class for EPICO REST API",
   "AUTHOR" => "Jos\x{e9} M. Fern\x{e1}ndez L<https://github.com/jmfernandez>",
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0
+    "ExtUtils::MakeMaker" => 0,
+    "File::ShareDir::Install" => "0.06"
   },
   "DISTNAME" => "EPICO-ES-backend",
   "LICENSE" => "lgpl",
   "NAME" => "EPICO::ES::backend",
   "PREREQ_PM" => {
-    "BP::Loader" => "1.0.2",
+    "BP::Loader" => "1.0.3",
     "BP::Model" => "1.1.1",
     "Carp" => 0,
-    "EPICO::REST::Backend" => "1.0.0",
+    "EPICO::REST::Backend" => "1.0.1",
     "File::Basename" => 0,
     "File::Spec" => 0,
     "Log::Log4perl" => 0,
     "TabParser" => "0.01",
     "boolean" => 0
   },
-  "VERSION" => "v1.0.1",
+  "TEST_REQUIRES" => {
+    "Test::More" => "0.96"
+  },
+  "VERSION" => "v1.2.0",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -34,14 +44,15 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
-  "BP::Loader" => "1.0.2",
+  "BP::Loader" => "1.0.3",
   "BP::Model" => "1.1.1",
   "Carp" => 0,
-  "EPICO::REST::Backend" => "1.0.0",
+  "EPICO::REST::Backend" => "1.0.1",
   "File::Basename" => 0,
   "File::Spec" => 0,
   "Log::Log4perl" => 0,
   "TabParser" => "0.01",
+  "Test::More" => "0.96",
   "boolean" => 0
 );
 
@@ -56,3 +67,9 @@ delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
   unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
 
 WriteMakefile(%WriteMakefileArgs);
+
+{
+package
+MY;
+use File::ShareDir::Install qw(postamble);
+}
