@@ -5,3 +5,6 @@ Revision history for EPICO-ES-backend
 v1.0.0
 	- Forked from https://github.com/inab/EPICO-REST-API.git
 	- Initial release based on Dist::Milla.
+
+v1.3.0
+	- Generalization to several genomic assemblies (TODO work).

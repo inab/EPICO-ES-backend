@@ -12,7 +12,7 @@ package EPICO::REST::Backend::EPICO;
 
 use version;
 
-our $VERSION = version->declare('v1.2.0');
+our $VERSION = version->declare('v1.3.0');
 
 use base qw(EPICO::REST::Backend);
 
@@ -438,12 +438,28 @@ our %FEATURE_RANKING_HASH = ();
 
 }
 
-sub getSampleTrackingData(;$) {
+# TODO: Extend to multiple assemblies
+sub getAssemblies($;$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($onlyIds) = @_;
+	my($assembly_id,$onlyIds) = @_;
+	
+	return [
+		{
+			'id' => 'dummy'
+		}
+	];
+}
+
+# TODO: Extend to multiple assemblies
+sub getSampleTrackingData($;$) {
+	my $self = shift;
+	
+	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
+	
+	my($assembly_id,$onlyIds) = @_;
 	
 	my $model = $self->{model};
 	my $dbModel = $self->getModelFromDomain();
@@ -495,14 +511,16 @@ sub getSampleTrackingData(;$) {
 	return $retval;
 }
 
+# TODO: Extend to multiple assemblies
 # Input parameters:
 #	conceptDomainName: The concept domain name
 #	conceptName: The concept name (which can be undef)
+#	assembly_id: The assembly id
 #	key_id: If defined, fetch the subset of concept instances matching these concept ids
 #	onlyIds: If true, return only the concept instance ids
 #	attr_name: If defined, match key_id against this attribute, instead of the concept id
 #	p_filterFunc: A entry filtering function
-sub _getFromConcept($$;$$$$) {
+sub _getFromConcept($$$;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
@@ -584,59 +602,62 @@ sub _getFromConcept($$;$$$$) {
 	return $retval;
 }
 
-sub getDonors(;$$$$) {
+sub getDonors($;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($donor_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
+	my($assembly_id,$donor_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
-	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::DONOR_CONCEPT_NAME,$donor_id,$onlyIds,$attr_name,$p_filterFunc);
+	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::DONOR_CONCEPT_NAME,$assembly_id,$donor_id,$onlyIds,$attr_name,$p_filterFunc);
 }
 
-sub getSpecimens(;$$$$) {
+sub getSpecimens($;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($specimen_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
+	my($assembly_id,$specimen_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
-	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::SPECIMEN_CONCEPT_NAME,$specimen_id,$onlyIds,$attr_name,$p_filterFunc);
+	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::SPECIMEN_CONCEPT_NAME,$assembly_id,$specimen_id,$onlyIds,$attr_name,$p_filterFunc);
 }
 
-sub getSamples(;$$$$) {
+sub getSamples($;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($sample_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
+	my($assembly_id,$sample_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
-	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::SAMPLE_CONCEPT_NAME,$sample_id,$onlyIds,$attr_name,$p_filterFunc);
+	return $self->_getFromConcept(EPICO::REST::Backend::SAMPLE_TRACKING_DATA_CONCEPT_DOMAIN_NAME,EPICO::REST::Backend::SAMPLE_CONCEPT_NAME,$assembly_id,$sample_id,$onlyIds,$attr_name,$p_filterFunc);
 }
 
-sub getExperiments(;$$$$) {
+sub getExperiments($;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($experiment_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
+	my($assembly_id,$experiment_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
-	return $self->_getFromConcept(EPICO::REST::Backend::LABORATORY_EXPERIMENTS_CONCEPT_DOMAIN_NAME,undef,$experiment_id,$onlyIds,$attr_name,$p_filterFunc);
+	return $self->_getFromConcept(EPICO::REST::Backend::LABORATORY_EXPERIMENTS_CONCEPT_DOMAIN_NAME,undef,$assembly_id,$experiment_id,$onlyIds,$attr_name,$p_filterFunc);
 }
 
+
+# TODO: add support to multiple assemblies
 # Input parameters:
 #	collectionName: The collection name
+#	assembly_id: The assembly id
 #	key_id: If defined, fetch the subset of concept instances on the input collection matching these concept ids
 #	onlyIds: If true, return only the concept instance ids
 #	attr_name: If defined, match key_id against this attribute, instead of the concept id
 #	p_filterFunc: A entry filtering function
 #	p_renderFunc: A entry rendering function. If set, it returns an empty array
-sub _getFromCollection($;$$$\&\&) {
+sub _getFromCollection($$;$$$\&\&) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($collectionName,$key_id,$onlyIds,$attr_name,$p_filterFunc,$p_renderFunc) = @_;
+	my($collectionName,$assembly_id,$key_id,$onlyIds,$attr_name,$p_filterFunc,$p_renderFunc) = @_;
 	
 	my $termQuery = undef;
 	if(defined($key_id) && (ref($key_id) || $key_id ne ALL_IDS())) {
@@ -721,14 +742,14 @@ sub _getFromCollection($;$$$\&\&) {
 	return $retval;
 }
 
-sub getAnalysisMetadata(;$$$$) {
+sub getAnalysisMetadata($;$$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
 	my($analysis_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
-	return $self->_getFromCollection(METADATA_COLLECTION,$analysis_id,$onlyIds,$attr_name,$p_filterFunc);
+	return $self->_getFromCollection(METADATA_COLLECTION,$assembly_id,$analysis_id,$onlyIds,$attr_name,$p_filterFunc);
 }
 
 sub _ChooseLabelFromSymbols($) {
@@ -757,12 +778,12 @@ sub _ChooseLabelFromSymbols($) {
 	return $featureSymbol->{'value'}[0];
 }
 
-sub getGeneExpressionFromCompoundAnalysisIds(\@;\&) {
+sub getGeneExpressionFromCompoundAnalysisIds($\@;\&) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($compound_analysis_ids,$p_renderFunc) = @_;
+	my($assembly_id,$compound_analysis_ids,$p_renderFunc) = @_;
 	
 	# Using this hash to store the analysis_id <=> compound_analysis_id correspondence
 	my %analysis_ids = map { ( ref($_) eq 'ARRAY'? $_->[-1] : $_ ) => $_ } @{$compound_analysis_ids};
@@ -842,7 +863,7 @@ sub getGeneExpressionFromCompoundAnalysisIds(\@;\&) {
 					$geneIdLookup{$geneId} = $geneId;
 				}
 				
-				my $p_geneNames = $self->_queryFeaturesInternal([REGION_FEATURE_GENE],\@geneIds);
+				my $p_geneNames = $self->_queryFeaturesInternal($assembly_id,[REGION_FEATURE_GENE],\@geneIds);
 				
 				foreach my $p_geneName (@{$p_geneNames}) {
 					my $geneId = $p_geneName->{'feature_id'};
@@ -872,7 +893,7 @@ sub getGeneExpressionFromCompoundAnalysisIds(\@;\&) {
 		return undef;
 	};
 	
-	my $retval = $self->_getFromCollection(PRIMARY_COLLECTION,\@analysis_ids_keys,undef,undef,\&EPICO::REST::Backend::_FilterEntryByGeneExpressionAnalysisData,$p_enrichAndRenderFunc);
+	my $retval = $self->_getFromCollection(PRIMARY_COLLECTION,$assembly_id,\@analysis_ids_keys,undef,undef,\&EPICO::REST::Backend::_FilterEntryByGeneExpressionAnalysisData,$p_enrichAndRenderFunc);
 	
 	if(defined($retval) && $numRetQueue > 0) {
 		# This flushes the return queue (in case it wasn't)
@@ -895,12 +916,12 @@ sub getGeneExpressionFromCompoundAnalysisIds(\@;\&) {
 	}
 }
 
-sub getRegulatoryRegionsFromCompoundAnalysisIds(\@;\&) {
+sub getRegulatoryRegionsFromCompoundAnalysisIds($\@;\&) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($compound_analysis_ids,$p_renderFunc) = @_;
+	my($assembly_id,$compound_analysis_ids,$p_renderFunc) = @_;
 	
 	# Using this hash to store the analysis_id <=> compound_analysis_id correspondence
 	my %analysis_ids = map { ( ref($_) eq 'ARRAY'? $_->[-1] : $_ ) => $_ } @{$compound_analysis_ids};
@@ -967,7 +988,7 @@ sub getRegulatoryRegionsFromCompoundAnalysisIds(\@;\&) {
 		return undef;
 	};
 	
-	my $retval = $self->_getFromCollection(PRIMARY_COLLECTION,\@analysis_ids_keys,undef,undef,\&EPICO::REST::Backend::_FilterEntryByRegulatoryRegionsData,$p_enrichAndRenderFunc);
+	my $retval = $self->_getFromCollection(PRIMARY_COLLECTION,$assembly_id,\@analysis_ids_keys,undef,undef,\&EPICO::REST::Backend::_FilterEntryByRegulatoryRegionsData,$p_enrichAndRenderFunc);
 	
 	if(defined($retval) && $numRetQueue > 0) {
 		# This flushes the return queue (in case it wasn't)
@@ -984,13 +1005,13 @@ sub getRegulatoryRegionsFromCompoundAnalysisIds(\@;\&) {
 	}
 }
 
-
-sub _genShouldQuery($;$) {
+# TODO: add support to multiple assemblies
+sub _genShouldQuery($$;$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($rangeData,$prefix) = @_;
+	my($assembly_id,$rangeData,$prefix) = @_;
 	
 	my $flankingWindowSize = exists($rangeData->{flankingWindowSize}) ? $rangeData->{flankingWindowSize} : 0;
 	
@@ -1096,12 +1117,12 @@ sub _genShouldQuery($;$) {
 }
 
 
-sub _getDataFromCollection($$) {
+sub _getDataFromCollection($$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($collectionName,$rangeData) = @_;
+	my($collectionName,$assembly_id,$rangeData) = @_;
 	
 	my $model = $self->{model};
 	my $dbModel = $self->getModelFromDomain();
@@ -1110,7 +1131,7 @@ sub _getDataFromCollection($$) {
 		my $collection = $model->getCollection($collectionName);
 		
 		if(defined($collection)) {
-			my $shouldQuery = $self->_genShouldQuery($rangeData);
+			my $shouldQuery = $self->_genShouldQuery($assembly_id,$rangeData);
 			my $query_body = {
 				'query'	=>	{
 					'filtered'	=>	{
@@ -1148,12 +1169,12 @@ sub _getDataFromCollection($$) {
 	return $retval;
 }
 
-sub getDataFromCoords($$$) {
+sub getDataFromCoords($$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($chromosome,$chromosome_start,$chromosome_end) = @_;
+	my($assembly_id,$chromosome,$chromosome_start,$chromosome_end) = @_;
 	
 	# Mitochondrial chromosome name normalization
 	$chromosome = 'MT'  if($chromosome eq 'M');
@@ -1168,15 +1189,15 @@ sub getDataFromCoords($$$) {
 		]
 	};
 	
-	return $self->_getDataFromCollection(PRIMARY_COLLECTION,$rangeData);
+	return $self->_getDataFromCollection(PRIMARY_COLLECTION,$assembly_id,$rangeData);
 }
 
-sub _getDataStreamFromCollection($$) {
+sub _getDataStreamFromCollection($$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($collectionName,$rangeData) = @_;
+	my($collectionName,$assembly_id,$rangeData) = @_;
 	
 	my $model = $self->{model};
 	my $dbModel = $self->getModelFromDomain();
@@ -1185,7 +1206,7 @@ sub _getDataStreamFromCollection($$) {
 		my $collection = $model->getCollection($collectionName);
 		
 		if(defined($collection)) {
-			my $shouldQuery = $self->_genShouldQuery($rangeData);
+			my $shouldQuery = $self->_genShouldQuery($assembly_id,$rangeData);
 			my $query_body = {
 				'query'	=>	{
 					'filtered'	=>	{
@@ -1230,12 +1251,12 @@ sub _getDataStreamFromCollection($$) {
 	return $retval;
 }
 
-sub getDataStreamFromCoords($$$) {
+sub getDataStreamFromCoords($$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($chromosome,$chromosome_start,$chromosome_end) = @_;
+	my($assembly_id,$chromosome,$chromosome_start,$chromosome_end) = @_;
 	
 	# Mitochondrial chromosome name normalization
 	$chromosome = 'MT'  if($chromosome eq 'M');
@@ -1250,7 +1271,7 @@ sub getDataStreamFromCoords($$$) {
 		]
 	};
 	
-	return $self->_getDataStreamFromCollection(PRIMARY_COLLECTION,$rangeData);
+	return $self->_getDataStreamFromCollection(PRIMARY_COLLECTION,$assembly_id,$rangeData);
 }
 
 sub _fetchDataStreamFromCollection($\%) {
@@ -1315,12 +1336,12 @@ sub fetchDataStream(\%) {
 	return $self->_fetchDataStreamFromCollection(PRIMARY_COLLECTION,$p_scroll);
 }
 
-sub _getDataCountFromCollection($$) {
+sub _getDataCountFromCollection($$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($collectionName,$rangeData) = @_;
+	my($collectionName,$assembly_id,$rangeData) = @_;
 	
 	my $model = $self->{model};
 	my $dbModel = $self->getModelFromDomain();
@@ -1329,7 +1350,7 @@ sub _getDataCountFromCollection($$) {
 		my $collection = $model->getCollection($collectionName);
 		
 		if(defined($collection)) {
-			my $shouldQuery = $self->_genShouldQuery($rangeData);
+			my $shouldQuery = $self->_genShouldQuery($assembly_id,$rangeData);
 			my $key_name = $collection2id{$collectionName};
 			my $query_body = {
 				'query'	=>	{
@@ -1369,12 +1390,12 @@ sub _getDataCountFromCollection($$) {
 	return $retval;
 }
 
-sub getDataCountFromCoords($$$) {
+sub getDataCountFromCoords($$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($chromosome,$chromosome_start,$chromosome_end) = @_;
+	my($assembly_id,$chromosome,$chromosome_start,$chromosome_end) = @_;
 	
 	# Mitochondrial chromosome name normalization
 	$chromosome = 'MT'  if($chromosome eq 'M');
@@ -1389,7 +1410,7 @@ sub getDataCountFromCoords($$$) {
 		]
 	};
 	
-	return $self->_getDataCountFromCollection(PRIMARY_COLLECTION,$rangeData);
+	return $self->_getDataCountFromCollection(PRIMARY_COLLECTION,$assembly_id,$rangeData);
 }
 
 use constant {
@@ -1400,12 +1421,12 @@ use constant {
 	PDNA_AGG_NAME	=>	'ChipSeq',
 };
 
-sub _getDataStatsFromCollection($$) {
+sub _getDataStatsFromCollection($$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($collectionName,$rangeData) = @_;
+	my($collectionName,$assembly_id,$rangeData) = @_;
 	
 	my $model = $self->{model};
 	my $dbModel = $self->getModelFromDomain();
@@ -1414,7 +1435,7 @@ sub _getDataStatsFromCollection($$) {
 		my $collection = $model->getCollection($collectionName);
 		
 		if(defined($collection)) {
-			my $shouldQuery = $self->_genShouldQuery($rangeData);
+			my $shouldQuery = $self->_genShouldQuery($assembly_id,$rangeData);
 			my $key_name = $collection2id{$collectionName};
 			
 			my $DLAT_CONCEPT = $model->getConceptDomain(EPICO::REST::Backend::DLAT_CONCEPT_DOMAIN_NAME)->conceptHash()->{EPICO::REST::Backend::DLAT_CONCEPT_NAME()}->id();
@@ -1579,12 +1600,12 @@ sub _getDataStatsFromCollection($$) {
 	return $retval;
 }
 
-sub getDataStatsFromCoords($$$) {
+sub getDataStatsFromCoords($$$$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($chromosome,$chromosome_start,$chromosome_end) = @_;
+	my($assembly_id,$chromosome,$chromosome_start,$chromosome_end) = @_;
 	
 	# Mitochondrial chromosome name normalization
 	$chromosome = 'MT'  if($chromosome eq 'M');
@@ -1599,15 +1620,15 @@ sub getDataStatsFromCoords($$$) {
 		]
 	};
 	
-	return $self->_getDataStatsFromCollection(PRIMARY_COLLECTION,$rangeData);
+	return $self->_getDataStatsFromCollection(PRIMARY_COLLECTION,$assembly_id,$rangeData);
 }
 
-sub getGenomicLayout($) {
+sub getGenomicLayout($$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($rangeData) = @_;
+	my($assembly_id,$rangeData) = @_;
 	
 	my $conceptDomainName = EPICO::REST::Backend::EXTERNAL_CONCEPT_DOMAIN_NAME();
 	my $conceptName = EPICO::REST::Backend::FEATURES_CONCEPT_NAME();
@@ -1621,7 +1642,7 @@ sub getGenomicLayout($) {
 		
 		if(defined($conceptDomain) && exists($conceptDomain->conceptHash()->{$conceptName})) {
 			my $concept = $conceptDomain->conceptHash()->{$conceptName};
-			my $nestedShouldQuery = $self->_genShouldQuery($rangeData,$prefix);
+			my $nestedShouldQuery = $self->_genShouldQuery($assembly_id,$rangeData,$prefix);
 			my $query_body = {
 				'query'	=>	{
 					'filtered'	=>	{
@@ -1666,12 +1687,12 @@ sub getGenomicLayout($) {
 	return $retval;
 }
 
-sub queryFeatures($) {
+sub queryFeatures($$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($queryString) = @_;
+	my($assembly_id,$queryString) = @_;
 	
 	my $queryTypes = DEFAULT_QUERY_TYPES;
 	my $query = $queryString;
@@ -1685,15 +1706,15 @@ sub queryFeatures($) {
 		}
 	}
 	
-	return $self->_queryFeaturesInternal($queryTypes,$query);
+	return $self->_queryFeaturesInternal($assembly_id,$queryTypes,$query);
 }
 	
-sub _queryFeaturesInternal(\@$) {
+sub _queryFeaturesInternal($\@$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($queryTypes,$query) = @_;
+	my($assembly_id,$queryTypes,$query) = @_;
 	
 	my $termQuery = ref($query) ? 'terms':'term';
 	
@@ -1798,12 +1819,12 @@ sub _queryFeaturesInternal(\@$) {
 	return $retval;
 }
 
-sub suggestFeatures($) {
+sub suggestFeatures($$) {
 	my $self = shift;
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($queryString) = @_;
+	my($assembly_id,$queryString) = @_;
 	
 	
 	my $queryType = undef;

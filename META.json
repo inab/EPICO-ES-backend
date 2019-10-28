@@ -47,7 +47,7 @@
             "BP::Loader" : "v1.0.3",
             "BP::Model" : "v1.1.1",
             "Carp" : "0",
-            "EPICO::REST::Backend" : "v1.0.1",
+            "EPICO::REST::Backend" : "v2.0.0",
             "File::Basename" : "0",
             "File::Spec" : "0",
             "Log::Log4perl" : "0",
@@ -73,7 +73,7 @@
          "web" : "https://github.com/inab/EPICO-ES-backend"
       }
    },
-   "version" : "v1.2.0",
+   "version" : "v1.3.0",
    "x_contributors" : [
       "Jos\u00e9 Mar\u00eda Fern\u00e1ndez <jose.m.fernandez@bsc.es>"
    ],

@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     "BP::Loader" => "1.0.3",
     "BP::Model" => "1.1.1",
     "Carp" => 0,
-    "EPICO::REST::Backend" => "1.0.1",
+    "EPICO::REST::Backend" => "2.0.0",
     "File::Basename" => 0,
     "File::Spec" => 0,
     "Log::Log4perl" => 0,
@@ -36,7 +36,7 @@ my %WriteMakefileArgs = (
   "TEST_REQUIRES" => {
     "Test::More" => "0.96"
   },
-  "VERSION" => "v1.2.0",
+  "VERSION" => "v1.3.0",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -47,7 +47,7 @@ my %FallbackPrereqs = (
   "BP::Loader" => "1.0.3",
   "BP::Model" => "1.1.1",
   "Carp" => 0,
-  "EPICO::REST::Backend" => "1.0.1",
+  "EPICO::REST::Backend" => "2.0.0",
   "File::Basename" => 0,
   "File::Spec" => 0,
   "Log::Log4perl" => 0,
