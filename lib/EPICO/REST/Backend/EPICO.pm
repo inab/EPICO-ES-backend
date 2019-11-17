@@ -1914,7 +1914,11 @@ EPICO::REST::Backend::EPICO - Native ElasticSearch backend class for EPICO REST 
 
 =head1 SYNOPSIS
 
+=for markdown ```perl
+
     use EPICO::REST::Backend::EPICO;
+
+=for markdown ```
     
 =head1 DESCRIPTION
 
@@ -1933,6 +1937,17 @@ instances for other external sources.
 =head1 METHODS
 
 I<(to be documented)>
+
+=head1 INSTALLATION
+
+Latest release of this package is available in the L<BSC INB DarkPAN|https://gitlab.bsc.es/inb/darkpan/>. You
+can install it just using C<cpanm>:
+
+=for markdown ```bash
+
+  cpanm --mirror-only --mirror https://gitlab.bsc.es/inb/darkpan/raw/master/ --mirror https://cpan.metacpan.org/ EPICO::REST::Backend::EPICO
+
+=for markdown ```
 
 =head1 AUTHOR
 

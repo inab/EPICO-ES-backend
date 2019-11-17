@@ -6,17 +6,17 @@ requires 'boolean';
 requires 'Carp';
 requires 'Log::Log4perl';
 
-requires 'EPICO::REST::Backend', 'v2.0.0', url => 'https://github.com/inab/EPICO-abstract-backend/archive/v2.0.0.tar.gz';
+# Next dependencies are in the BSC INB DarkPAN
 
-requires 'TabParser', '0.01', url => 'https://github.com/inab/TabParser/archive/0.01.tar.gz';
+requires 'EPICO::REST::Backend', 'v2.0.0';
 
-requires 'BP::Model', 'v1.1.1', url => 'https://github.com/inab/BP-Model/archive/v1.1.1.tar.gz';
+requires 'BP::Model', 'v1.1.1';
 
-requires 'BP::Loader', 'v1.0.3', url => 'https://github.com/inab/BP-Schema-tools/archive/v1.0.3.tar.gz';
+requires 'BP::Loader', 'v1.0.3';
 
 # These are not needed in this project
 
-#requires 'BP::DCCLoader', 'v1.0.1', url => 'https://github.com/inab/EPICO-data-loading-scripts/archive/v1.0.1.tar.gz';
+#requires 'BP::DCCLoader', 'v1.0.1';
 
 on test => sub {
     requires 'Test::More', '0.96';
@@ -27,4 +27,6 @@ on develop => sub {
     requires 'Dist::Zilla::Plugin::MakeMaker';
     requires 'Dist::Zilla::Plugin::ModuleShareDirs';
     requires 'Dist::Zilla::Plugin::Prereqs::FromCPANfile';
+    requires 'Dist::Zilla::Plugin::Run', '0.048';
+    requires 'OrePAN2';
 };
