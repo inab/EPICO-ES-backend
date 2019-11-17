@@ -1,6 +1,8 @@
 Revision history for EPICO-ES-backend
 
 {{$NEXT}}
+
+v1.3.1  2019-11-17 22:18:04 CET
 	- Added missing development dependencies.
 	- Updated install instructions, where it shows how to inject this
 	  modules dependency in different scenarios.
