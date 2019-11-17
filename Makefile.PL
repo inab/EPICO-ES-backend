@@ -30,7 +30,6 @@ my %WriteMakefileArgs = (
     "File::Basename" => 0,
     "File::Spec" => 0,
     "Log::Log4perl" => 0,
-    "TabParser" => "0.01",
     "boolean" => 0
   },
   "TEST_REQUIRES" => {
@@ -51,7 +50,6 @@ my %FallbackPrereqs = (
   "File::Basename" => 0,
   "File::Spec" => 0,
   "Log::Log4perl" => 0,
-  "TabParser" => "0.01",
   "Test::More" => "0.96",
   "boolean" => 0
 );

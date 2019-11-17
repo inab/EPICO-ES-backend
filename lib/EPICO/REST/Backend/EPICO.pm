@@ -747,7 +747,7 @@ sub getAnalysisMetadata($;$$$$) {
 	
 	Carp::croak((caller(0))[3].' is an instance method!')  if(BP::Model::DEBUG && !ref($self));
 	
-	my($analysis_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
+	my($assembly_id,$analysis_id,$onlyIds,$attr_name,$p_filterFunc) = @_;
 	
 	return $self->_getFromCollection(METADATA_COLLECTION,$assembly_id,$analysis_id,$onlyIds,$attr_name,$p_filterFunc);
 }
